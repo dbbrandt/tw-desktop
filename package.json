@@ -14,7 +14,8 @@
     "webpack:watch": "webpack --watch",
     "webpack:prod": "cross-env NODE_ENV=production webpack",
     "electron:start": "electron src-main/entrypoint.js",
-    "electron:package:dir": "electron-builder --dir"
+    "electron:package:dir": "electron-builder --dir",
+    "dev": "npm run fetch && concurrently -k \"npm:webpack:watch\" \"npm:electron:start\""
   },
   "dependencies": {
     "semver": "^7.7.3"
@@ -28,6 +29,7 @@
     "adm-zip": "^0.5.16",
     "autoprefixer": "^9.8.8",
     "babel-loader": "^8.4.1",
+    "concurrently": "^9.2.1",
     "copy-webpack-plugin": "^6.4.1",
     "cross-env": "^10.1.0",
     "css-loader": "^1.0.1",
