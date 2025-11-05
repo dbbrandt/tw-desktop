@@ -23,6 +23,52 @@ The `dev` script runs:
 - `npm run fetch` (downloads libraries, updates packager, prepares extensions)
 - `webpack --watch` and `electron src-main/entrypoint.js` concurrently
 
+---
+
+## Develop with a sibling tw-gui (linked scratch-gui)
+This repo supports live development against a local tw-gui checkout using npm link.
+
+1) In your tw-gui checkout (sibling directory)
+```bash
+# from ../tw-gui
+npm ci
+npm link  # exposes scratch-gui globally for linking
+```
+
+2) In this turbowarp desktop repo
+```bash
+# ensure deps
+npm ci
+
+# link to the local scratch-gui from tw-gui
+npm run gui:link  # runs: npm link scratch-gui
+
+# start desktop with the linked GUI
+npm run dev:gui
+```
+
+Notes about the webpack setup here:
+- scratch-blocks media is resolved dynamically (findScratchBlocksMedia) so media copies even when scratch-gui/scratch-blocks are linked.
+- React, React-DOM, React-Redux, and Redux are aliased to this repo’s node_modules and resolve.symlinks=false avoids duplicate React trees when using links.
+
+### Unlink / restore registry packages
+If you want to go back to registry scratch-gui:
+```bash
+# in this repo
+npm unlink scratch-gui && npm install
+
+# optionally in ../tw-gui, remove global link
+npm unlink -g scratch-gui || true
+```
+
+### Troubleshooting
+- Runtime error "Could not find store in the context of Connect(...)": ensure a single copy of React/React-Redux is bundled. Run:
+  ```bash
+  npm ls react react-dom react-redux redux | sed -n '1,120p'
+  ```
+  Aliases in webpack.config.cjs plus symlinks=false should prevent duplicates.
+- Build error "unable to locate ... node_modules/scratch-blocks/media glob": the config now resolves the real path; re-run `npm run webpack:compile` or `npm run dev:gui` after linking.
+
 ## One-off manual run
 ```bash
 npm run fetch

@@ -1,0 +1,4 @@
+  {
+    "allowOpcodes": ["motion_movesteps", "motion_gotoxy","control_repeat", "event_whenflagclicked","myBlocks_explode"],
+    "allowCategories": ["motion", "control", "events", "myBlocks"]
+  }
