@@ -2,6 +2,22 @@ const path = require('path');
 const {DefinePlugin} = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+// Resolve the actual location of scratch-blocks/media even when scratch-gui is npm-linked
+const resolvePackageDir = (pkg, opts) => path.dirname(require.resolve(`${pkg}/package.json`, opts || {}));
+function findScratchBlocksMedia() {
+    // Try resolve directly from this project
+    try {
+        return path.join(resolvePackageDir('scratch-blocks'), 'media');
+    } catch (e) {}
+    // Try resolve relative to scratch-gui (when scratch-gui is linked and contains its own scratch-blocks)
+    try {
+        const sbPkgPath = require.resolve('scratch-blocks/package.json', { paths: [resolvePackageDir('scratch-gui')] });
+        return path.join(path.dirname(sbPkgPath), 'media');
+    } catch (e) {}
+    // Fallback to common local layout used during development
+    return path.resolve(__dirname, '../tw-gui/node_modules/scratch-blocks/media');
+}
+
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-source-map',
@@ -71,11 +87,11 @@ module.exports = [
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: 'node_modules/scratch-blocks/media',
+                        from: findScratchBlocksMedia(),
                         to: 'static/blocks-media/default'
                     },
                     {
-                        from: 'node_modules/scratch-blocks/media',
+                        from: findScratchBlocksMedia(),
                         to: 'static/blocks-media/high-contrast'
                     },
                     {
@@ -91,9 +107,14 @@ module.exports = [
             })
         ],
         resolve: {
+            symlinks: false,
             alias: {
                 'scratch-gui$': path.resolve(__dirname, 'node_modules/scratch-gui/src/index.js'),
                 'scratch-render-fonts$': path.resolve(__dirname, 'node_modules/scratch-gui/src/lib/tw-scratch-render-fonts'),
+                'react': path.resolve(__dirname, 'node_modules/react'),
+                'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+                'react-redux': path.resolve(__dirname, 'node_modules/react-redux'),
+                'redux': path.resolve(__dirname, 'node_modules/redux')
             }
         }
     },
