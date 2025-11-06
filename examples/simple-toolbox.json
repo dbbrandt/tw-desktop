@@ -1,0 +1,4 @@
+  {
+    "allowOpcodes": ["control_repeat", "control_forever", "event_whenflagclicked"],
+    "allowCategories": ["control", "events"]
+  }
