@@ -81,6 +81,33 @@ npm run electron:start
 npm run electron:package:dir
 ```
 
+## Build macOS DMG for distribution (with local tw-gui)
+
+1) Ensure `../tw-gui` is up to date and linked
+```bash
+# from ../tw-gui
+npm ci
+npm link  # exposes scratch-gui globally for linking
+
+# back in this repo
+npm run gui:link  # runs: npm link scratch-gui
+```
+
+2) Build production assets
+```bash
+npm run fetch
+npm run webpack:prod
+```
+
+3) Build a macOS DMG (universal, no publish)
+```bash
+npx electron-builder --mac dmg --universal --publish=never
+```
+
+Artifacts:
+- DMG: `dist/TurboWarp-Setup-<version>.dmg` (send to users)
+- App bundle: under `dist/mac` (or similar) for local install/testing
+
 ## Sync fork with upstream
 Remotes (expected):
 ```bash

@@ -1,4 +1,4 @@
   {
-    "allowOpcodes": ["control_repeat", "control_forever", "event_whenflagclicked"],
-    "allowCategories": ["control", "events"]
+    "allowOpcodes": ["event_whenflagclicked"],
+    "allowCategories": ["events", "myblocks"]
   }
