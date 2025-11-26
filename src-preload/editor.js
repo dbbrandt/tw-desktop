@@ -24,6 +24,10 @@ contextBridge.exposeInMainWorld('EditorPreload', {
   setIsFullScreen: (isFullScreen) => ipcRenderer.invoke('set-is-full-screen', isFullScreen)
 });
 
+contextBridge.exposeInMainWorld('twBridge', {
+  readDefaultConfig: () => ipcRenderer.invoke('tw-bridge:read-default-config')
+});
+
 let exportForPackager = () => Promise.reject(new Error('exportForPackager missing'));
 
 ipcRenderer.on('export-project-to-port', (e) => {

@@ -568,6 +568,30 @@ class EditorWindow extends ProjectRunningWindow {
       this.isInEditorFullScreen = !!isFullScreen;
     });
 
+    // TW-5: Provide a safe bridge for reading default toolbox config from user locations
+    this.ipc.handle('tw-bridge:read-default-config', async () => {
+      const home = app.getPath('home');
+      const candidates = [
+        path.join(home, 'twconfig.json'),
+        path.join(home, 'Documents', 'twconfig.json')
+      ];
+
+      for (const p of candidates) {
+        try {
+          const data = await fsPromises.readFile(p, 'utf8');
+          const parsed = JSON.parse(data);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            return parsed;
+          }
+          // If parsed is not a plain object, treat as invalid and try next.
+        } catch (e) {
+          // Ignore ENOENT and JSON parse errors; continue to next candidate
+        }
+      }
+
+      return null;
+    });
+
     this.loadURL('tw-editor://./gui/gui.html');
     this.show();
   }
