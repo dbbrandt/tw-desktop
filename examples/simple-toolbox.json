@@ -1,4 +1,0 @@
-  {
-    "allowOpcodes": ["event_whenflagclicked"],
-    "allowCategories": ["events", "myblocks"]
-  }
